@@ -39,6 +39,9 @@ def _write_url_file_to_disk(filename, url_list):
         for url in url_list:
             f.write(url+'\n')
         f.close()
+        logging.info('successfully wrote {count} urls to file={file}.'.format(
+            file=filename, count=len(url_list)))
+        return True
     except Exception as ex:
         logging.error('Unable to write urls to file={file}. Error={err}'.format(
             file=filename, err=ex))
@@ -94,7 +97,8 @@ def main(argv):
         if not create_directory(dir + parsed_url.netloc):
             return
         # Write url file to disk
-        _write_url_file_to_disk(filename=parsed_url.netloc, url_list=urls)
+        _write_url_file_to_disk(filename=parsed_url.netloc+'.txt',
+                                url_list=urls)
         # Download Images
         stats = download_images(urls)
         logging.info('Successfully downloaded {succ} images and failed to '
