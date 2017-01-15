@@ -90,3 +90,7 @@ ENV/
 
 # IDE
 .idea
+
+# Ignore temp files 
+images
+files
