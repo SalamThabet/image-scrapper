@@ -91,7 +91,8 @@ def main(argv):
         urls = get_image_urls_from_webpage(in_url)
         parsed_url = urlparse(in_url)
         # Create directory
-        create_directory(dir + parsed_url.netloc)
+        if not create_directory(dir + parsed_url.netloc):
+            return
         # Write url file to disk
         _write_url_file_to_disk(filename=parsed_url.netloc, url_list=urls)
         # Download Images

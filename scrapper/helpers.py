@@ -54,6 +54,10 @@ def create_directory(path):
             logging.info('{dir} created for storing images'.format(dir=path))
         os.chdir(path)
         return True
+    except OSError as os_ex:
+        logging.error('Cannot create requested directory={dir} to store '
+                      'files. Error={err}'.format(dir=dir, err=os_ex))
+        return False
     except Exception as ex:
         logging.error('Unable to setup directory={dir} for storing '
                       'images. Error={err}'.format(dir=path, err=ex))
