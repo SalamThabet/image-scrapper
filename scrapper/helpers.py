@@ -7,9 +7,6 @@ import os
 import sys
 import logging
 
-# logging.basicConfig(level=logging.DEBUG,
-#                     format='%(asctime)s - %(levelname)s - %(message)s')
-
 
 def install_package(package_name):
     """
@@ -94,8 +91,8 @@ def save_image_from_link(img_url):
     """
     import requests
     from posixpath import dirname
-    if img_url[:4] != 'http':
-        img_url = 'https:'+img_url
+    if not img_url.startswith('http'):
+        img_url = 'https:' + img_url
     logging.debug('Downloading image from url={url}}'.format(url=img_url))
     filename = get_filename(dirname(img_url.split('?')[0]) or 'unknown.jpg')
     try:
@@ -117,9 +114,9 @@ def save_image_from_uri(uri):
     :return:
     """
     import base64
-    if uri[:10] != 'data:image':
-        logging.uri('Invalid uri for extracting image. '
-                    'uri={in_uri}'.format(in_uri=uri))
+    if uri.startswith('data:image'):
+        logging.info('Invalid uri for extracting image uri={in_uri}'.format(
+            in_uri=uri))
         return
     # Get file extension and encoding scheme from URI.
     extension = uri.split(';')[0].split('/')[1]

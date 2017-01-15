@@ -53,14 +53,20 @@ def get_image_urls_from_webpage(input_url, inc_data_uri=True):
         html_tree = html.fromstring(page_content.text)
         # Images loaded directly
         image_urls = html_tree.xpath('//img/@src')
+        logging.debug('{count} links retrieved from <img> @src'.format(
+            count=len(image_urls)))
         # Images loaded in hyperlinks
         hyperlinks = html_tree.xpath('//a/@href')
         # Lazy loaded image sources.
         data_src_urls = html_tree.xpath('//img/@data-src')
+        logging.debug('{count} links retrieved from <img> @data-src'.format(
+            count=len(data_src_urls)))
 
         # Find Image links from hyperlinks
         hyperlinks_images = process_links(hyperlinks,
                                           file_extensions=image_extensions)
+        logging.debug('{count} links retrieved from images retrieved from '
+                      'hyperlinks'.format(count=len(hyperlinks_images)))
         # Combine all links
         image_urls.extend(data_src_urls)
         image_urls.extend(hyperlinks_images)
@@ -95,6 +101,9 @@ def get_image_urls_from_webpage(input_url, inc_data_uri=True):
                 processed_urls.append(os.path.join(os.path.dirname(input_url),
                                                    img_url))
         # Only return unique links to avoid repetition.
+        logging.info('{count} unique links extracted for image sources from '
+                     'given webpage={url}'.format(
+                        count=len(set(processed_urls)), url=input_url))
         return set(processed_urls)
     except (InvalidSchema, InvalidURL) as ex:
         logging.error('Invalid URL={url} provided for scrapping images. '
