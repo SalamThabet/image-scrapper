@@ -38,6 +38,18 @@ except ImportError:
     install_package('lxml')
     from lxml import html
 
+def get_netloc_from_url(url):
+    """
+    This function returns the net location for url by parsing it.
+    :param url: web page url
+    :return:
+    """
+    try:
+        return urlparse(url).netloc
+    except Exception as ex:
+        logging.error('Error {err} while parsing {url}'.format(err=ex, url=url))
+        return None
+
 
 def get_image_urls_from_webpage(input_url, inc_data_uri=True):
     """

@@ -15,15 +15,7 @@ import logging
 from scrapper.config import files_dir
 from scrapper.helpers import create_directory
 from scrapper.scrapping_functions import get_image_urls_from_webpage, \
-    download_images
-
-# Perform conditional imports
-try:
-    # Python 3
-    from urllib.parse import urlparse
-except ImportError:
-    # Python 2
-    from urlparse import urlparse
+    download_images, get_netloc_from_url
 
 
 def _write_url_file_to_disk(filename, url_list):
@@ -91,12 +83,12 @@ def main(argv):
 
         # Find URLs from input url
         urls = get_image_urls_from_webpage(in_url)
-        parsed_url = urlparse(in_url)
+
         # Create directory
-        if not create_directory(dir + parsed_url.netloc):
+        if not create_directory(dir + get_netloc_from_url(in_url)):
             return
         # Write url file to disk
-        _write_url_file_to_disk(filename=parsed_url.netloc+'.txt',
+        _write_url_file_to_disk(filename=get_netloc_from_url(in_url)+'.txt',
                                 url_list=urls)
         # Download Images
         stats = download_images(urls)
