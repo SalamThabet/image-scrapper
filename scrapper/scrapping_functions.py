@@ -14,6 +14,8 @@ from .config import image_extensions, protocols
 from .helpers import get_filename, save_image_from_uri, install_package, \
     process_links
 
+
+# Perform conditional imports
 try:
     # Python 3
     from urllib.parse import urlparse
@@ -28,6 +30,7 @@ except ImportError:
     install_package('requests')
     import requests
     from requests.exceptions import InvalidSchema, InvalidURL
+
 
 try:
     from lxml import html
@@ -105,7 +108,8 @@ def get_image_urls_from_webpage(input_url, inc_data_uri=True):
                      'given webpage={url}'.format(
                         count=len(set(processed_urls)), url=input_url))
         return set(processed_urls)
-    except (InvalidSchema, InvalidURL) as ex:
+    except (requests.exceptions.InvalidSchema,
+            requests.exceptions.InvalidURL) as ex:
         logging.error('Invalid URL={url} provided for scrapping images. '
                       'Error={err}'.format(url=input_url, err=ex))
         return []

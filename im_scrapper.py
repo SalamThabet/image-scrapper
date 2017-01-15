@@ -13,16 +13,36 @@ with all urls for images in directory specified with -d or --dir= option.
 """
 import os
 import logging
-from scrapper.config import  files_dir
+from scrapper.config import files_dir
+from scrapper.helpers import install_package, create_directory
 from scrapper.scrapping_functions import get_image_urls_from_webpage, \
     download_images
 
+# Perform conditional imports
 try:
     # Python 3
     from urllib.parse import urlparse
 except ImportError:
     # Python 2
     from urlparse import urlparse
+
+
+def _write_url_file_to_disk(filename, url_list):
+    """
+    This function writes list of urls to given file.
+    :param filename: path/name of file where urls should be written
+    :param url_list: list of urls to be written to file
+    :return:
+    """
+    try:
+        f = open(filename, 'w+')
+        for url in url_list:
+            f.write(url+'\n')
+        f.close()
+    except Exception as ex:
+        logging.error('Unable to write urls to file={file}. Error={err}'.format(
+            file=filename, err=ex))
+        return False
 
 
 def main(argv):
@@ -69,23 +89,11 @@ def main(argv):
 
         # Find URLs from input url
         urls = get_image_urls_from_webpage(in_url)
-
-        # Establish directory to store the downloaded images.
         parsed_url = urlparse(in_url)
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-        if not os.path.exists(dir + parsed_url.netloc):
-            os.makedirs(dir + parsed_url.netloc)
-            logging.info('{dir} created for storing images'.format(
-                dir=dir + parsed_url.netloc))
-        os.chdir(dir + parsed_url.netloc)
-
-        # Write URLs to file
-        f = open('{fn}.txt'.format(fn=parsed_url.netloc), 'w+')
-        for url in urls:
-            f.write(url+'\n')
-        f.close()
-
+        # Create directory
+        create_directory(dir + parsed_url.netloc)
+        # Write url file to disk
+        _write_url_file_to_disk(filename=parsed_url.netloc, url_list=urls)
         # Download Images
         stats = download_images(urls)
         logging.info('Successfully downloaded {succ} images and failed to '

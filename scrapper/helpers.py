@@ -38,6 +38,28 @@ def install_package(package_name):
         return False
 
 
+def create_directory(path):
+    """
+    This function creates directory for
+    :param path:
+    :return:
+    """
+    # Establish directory to store the downloaded images.
+    try:
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if not os.path.exists(path):
+            os.makedirs(path)
+            logging.info('{dir} created for storing images'.format(dir=path))
+        os.chdir(path)
+        return True
+    except Exception as ex:
+        logging.error('Unable to setup directory={dir} for storing '
+                      'images. Error={err}'.format(dir=path, err=ex))
+        return False
+
+
 def process_links(hyperlinks, file_extensions=None):
     """
     This function processes a list of hyperlinks retrieved from the webpage
