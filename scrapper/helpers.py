@@ -2,7 +2,6 @@
 This package contains helper functions to be used in the project.
 """
 
-import re
 import os
 import sys
 import logging
@@ -38,25 +37,25 @@ def install_package(package_name):
         return False
 
 
-def create_directory(path):
+def create_directory(path, change_to_directory=True):
     """
-    This function creates directory for
-    :param path:
+    This function creates the directories on the given path if they don't exist.
+    :param path: Path for directory creation
+    :param change_to_directory: Flag indicating whether program should switch
+    to given directory as working directory. (default=True)
     :return:
     """
     # Establish directory to store the downloaded images.
     try:
-
-        if not os.path.exists(path):
-            os.makedirs(path)
         if not os.path.exists(path):
             os.makedirs(path)
             logging.info('{dir} created for storing images'.format(dir=path))
-        os.chdir(path)
+        if change_to_directory:
+            os.chdir(path)
         return True
     except OSError as os_ex:
         logging.error('Cannot create requested directory={dir} to store '
-                      'files. Error={err}'.format(dir=dir, err=os_ex))
+                      'files. Error={err}'.format(dir=path, err=os_ex))
         return False
     except Exception as ex:
         logging.error('Unable to setup directory={dir} for storing '
@@ -193,16 +192,18 @@ def get_filename(fq_filepath):
     :return: fq_filepath (with incremented path if similar filepath already
     exists) e.g. folder/sub_folder/filename(1).extension
     """
-    import os
     filename = fq_filepath.split('/')[-1]
     if os.path.exists(fq_filepath):
         counter = 1
         logging.info('Finding incremented filepath for '
                      '{fp}'.format(fp=fq_filepath))
         while os.path.exists(fq_filepath):
-            fq_filepath = filename.split('.')[0] \
-                          + '(%s).' % counter \
-                          + '.'.join(filename.split('.')[1:])
+            # Get incremented file number
+            i_fn = '.'.join(filename.split('.')[:-1])\
+                   + ' (%s).' % counter\
+                   + filename.split('.')[-1]
+            fq_filepath = os.path.join('/'.join(fq_filepath.split('/')[:-1]),
+                                       i_fn)
             counter += 1
         logging.info('Incremented filepath={ifp} for given existing '
                      'filepath'.format(ifp=fq_filepath))

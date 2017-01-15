@@ -11,10 +11,9 @@ specified with -u or --url= option, stores the image files and a text file
 with all urls for images in directory specified with -d or --dir= option.
 
 """
-import os
 import logging
 from scrapper.config import files_dir
-from scrapper.helpers import install_package, create_directory
+from scrapper.helpers import create_directory
 from scrapper.scrapping_functions import get_image_urls_from_webpage, \
     download_images
 
